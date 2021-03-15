@@ -58,36 +58,7 @@ public class BuyerDTO {
 	public void setIsPrivileged(Integer isPrivileged) {
 		this.isPrivileged = isPrivileged;
 	}
-	//converts entity to dto
 	
-//	public static BuyerDTO valueOf(Buyer buy)
-//	{
-//		BuyerDTO buyerDTO= new BuyerDTO();
-//		buyerDTO.setBuyerId(buy.getBuyerId());
-//		buyerDTO.setEmail(buy.getEmail());
-//		buyerDTO.setIsactive(buy.getIsactive());
-//		buyerDTO.setIsPrivileged(buy.getIsPrivileged());
-//		buyerDTO.setName(buy.getName());
-//		buyerDTO.setPassword(buy.getPassword());
-//		buyerDTO.setPhonenumber(buy.getPhonenumber());
-//		buyerDTO.setRewardPoints(buy.getRewardPoints());
-//		
-//		return buyerDTO;
-//	}
-	// converts dto to entity
-//	public Buyer createEntity()
-//	{
-//		Buyer buy=new Buyer();
-//		buy.setBuyerId(this.getBuyerId());
-//		buy.setEmail(this.getEmail());
-//		buy.setIsactive(this.getIsactive());
-//		buy.setIsPrivileged(this.getIsPrivileged());
-//		buy.setName(this.getName());
-//		buy.setPassword(this.getPassword());
-//		buy.setPhonenumber(this.getPhonenumber());
-//		buy.setRewardPoints(this.getRewardPoints());
-//		return buy;
-//	}
 	@Override
 	public String toString()
 	{
