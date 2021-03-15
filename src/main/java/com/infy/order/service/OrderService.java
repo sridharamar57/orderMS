@@ -99,10 +99,15 @@ public class OrderService {
 //	}
 	public String addOrderDetails(Order order) throws Exception {
 		logger.info("Inserting Order details : {}");
-		Order order1=null;
-		
-		order1=orderRepo.save(order);
-		if(order1==null) {
+		//Order order1=null;
+		Integer i=null;
+		try {
+		i=orderRepo.save(order).getOrderId();
+		}
+		catch(Exception e) {
+			
+		}
+		if(i==null) {
 			return "failure";
 		}
 		return "Success";
