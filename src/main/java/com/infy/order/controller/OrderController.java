@@ -440,21 +440,135 @@ public class OrderController {
 		order=planService.getSpecificOrder(orderId);
 		}
 		catch (Exception e) {
-			// TODO: handle exception
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,environment.getProperty(e.getMessage()), e);
 		}
 		if(order!=null) {
 		if(order.getBuyerId().equals(buyerId)) {
-			order.setStatus("REORDER PLACED");
-			planService.updateOrder(order.getOrderId(), order);
+			BuyerDTO buyerdto=new RestTemplate().getForObject(userUri+"buyer/"+buyerId,BuyerDTO.class);
+			int shippingcost=0;
+			if(buyerdto.getIsPrivileged()==0) {
+				System.out.println("Since you are not a privileged Customer. You can order only minimum of Quantity= 50 for a specific item and Shipping cost=50");
+				shippingcost=50;
+			}
+			else {
+				System.out.println("Since you are privileged Customer. You can order infinite Quantity for a specific item and Shipping cost is free");
+				shippingcost=0;
+			}
+			List<ProductDTO> prodDTO=new ArrayList<>();
 			List<ProdOrdered> listorder=order.getProductsOrdered();
-			if(!listorder.isEmpty()) {
-				for(ProdOrdered p:listorder) {
-					p.setStatus("REORDER PLACED");
-					planService.updateProductOrdered(p.getOrderId(), p.getProductId(), p);
+			for(ProdOrdered po:listorder) {
+				ProductDTO pp1=new RestTemplate().getForObject(productUri+"products/orders/"+po.getProductId(),ProductDTO.class);
+				prodDTO.add(pp1);
+			}
+			System.out.println(prodDTO);
+			List<CartDTO> cartdto=new ArrayList<>();
+			for(ProdOrdered po:listorder) {
+				CartDTO c=new CartDTO();
+				c.setBuyerId(buyerId);
+				c.setProId(po.getProductId());
+				c.setQuantity(po.getQuantity());
+				cartdto.add(c);
+			}
+			double totalprice=planService.calculateTotalPrice(buyerdto.getIsPrivileged(),cartdto,prodDTO);
+			double totalpriceafterdiscount=planService.calculateAmount(buyerdto.getRewardPoints(), totalprice);
+			int rewardPoints=planService.calculateRewardPoints(totalpriceafterdiscount);
+			totalpriceafterdiscount=totalpriceafterdiscount+shippingcost;
+			if(rewardPoints>=10000) {
+				buyerdto.setIsPrivileged(1);
+			}
+			else {
+				buyerdto.setIsPrivileged(0);
+			}
+			buyerdto.setRewardPoints(1001);
+			new RestTemplate().put(userUri+"buyer/"+buyerId, buyerdto);
+			Order o=new Order();
+			o.setAddress(order.getAddress());
+			o.setAmount(totalpriceafterdiscount);
+			o.setBuyerId(buyerId);
+			o.setDate(LocalDate.now());
+			o.setStatus("RE-ORDER PLACED");
+			
+			try {
+			planService.addOrderDetails(o);
+			}
+			catch(Exception e) {
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST,environment.getProperty(e.getMessage()), e);
+			}
+		
+			List<OrderDTO> ol=new ArrayList<OrderDTO>();
+			try {
+			ol=planService.getAllOrderDetails();
+			}
+			catch (Exception e) {
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST,environment.getProperty(e.getMessage()), e);
+			}
+			int orderid=0;
+			for(OrderDTO orderlist:ol) {
+				orderid=orderlist.getOrderId();
+			}
+			
+			if(orderid!=0) {
+				if(buyerdto.getIsPrivileged()==1) {
+					for(CartDTO prod:cartdto) {
+						for(ProductDTO pr:prodDTO) {
+							if(prod.getProId().equals(pr.getProductId())) {
+								if(prod.getQuantity()<pr.getStock()) {
+									ProdOrdered po=new ProdOrdered();
+									po.setOrderId(orderid);
+									po.setPrice(pr.getPrice()*prod.getQuantity());
+									po.setProductId(prod.getProId());
+									po.setQuantity(prod.getQuantity());
+									po.setSellerid(pr.getSellerId());
+									po.setStatus("RE-ORDER PLACED");
+									int stock=pr.getStock()-prod.getQuantity();
+									pr.setStock(100);
+									new RestTemplate().put(productUri+"products/"+pr.getProductId(), pr);
+									try {
+										planService.addProdOrderedDetails(po);
+									}
+									catch(Exception ex) {
+										throw new ResponseStatusException(HttpStatus.BAD_REQUEST,environment.getProperty(ex.getMessage()), ex);
+									}
+								}
+							}
+						}
+						
+					}
 				}
+				else {
+					for(CartDTO prod:cartdto) {
+						for(ProductDTO pr:prodDTO) {
+							if(prod.getProId().equals(pr.getProductId())) {
+								if(prod.getQuantity()<pr.getStock()) {
+								if(prod.getQuantity()<=50) {
+									ProdOrdered po=new ProdOrdered();
+									po.setOrderId(orderid);
+									po.setPrice(pr.getPrice()*prod.getQuantity());
+									po.setProductId(prod.getProId());
+									po.setQuantity(prod.getQuantity());
+									po.setSellerid(pr.getSellerId());
+									po.setStatus("RE-ORDER PLACED");
+									int stock=pr.getStock()-prod.getQuantity();
+									pr.setStock(100);
+									new RestTemplate().put(productUri+"products/"+pr.getProductId(), pr);
+									try {
+										planService.addProdOrderedDetails(po);
+									}
+									catch(Exception ex) {
+										throw new ResponseStatusException(HttpStatus.BAD_REQUEST,environment.getProperty(ex.getMessage()), ex);
+									}
+								}
+							}
+						}
+					}
+						
+					}
+				}
+			}
+
 				String msg="Reorder is Successful  ";
 				return new ResponseEntity<String>(msg, HttpStatus.OK);
-			}
+//			}
 		}
 		else {
 			String msg="Enter valid OrderId and BuyerId  ";
