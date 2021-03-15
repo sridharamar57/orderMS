@@ -38,7 +38,6 @@ public class OrderService {
 			OrderDTO orderDTO = OrderDTO.valueOf(plan);
 			orderDTOs.add(orderDTO);
 		}
-		
 		try {
 		if(orderDTOs.isEmpty()) {
 			throw new Exception("OrderService.Orders_NOT_FOUND");
@@ -81,27 +80,30 @@ public class OrderService {
 		return "Success";
 	}
 	
+//	public String addOrderDetails(Order order) throws Exception {
+//		logger.info("Inserting Order details : {}");
+//		Order order1=null;
+//		try {
+//		order1=orderRepo.save(order);
+//		
+//		List<ProdOrdered> lp=order.getOrderDetails();
+//		if(order1==null) {
+//			throw new Exception("OrderService.ADD_INVALID");
+//		}
+//		
+//		}
+//		catch(Exception e) {
+//			throw e;
+//		}
+//		return "Success";
+//	}
 	public String addOrderDetails(Order order) throws Exception {
 		logger.info("Inserting Order details : {}");
 		Order order1=null;
-		try {
-		order1=orderRepo.save(order);
-		//Order b=
-		//System.out.println(orderRepo.save(order));
-		List<ProdOrdered> lp=order.getOrderDetails();
-		//System.out.println(lp);
-//		if(!lp.isEmpty()) {
-//			for(ProdOrdered po:lp) {
-//				prodRepo.save(po);
-//			}
-//		}
-		if(order1==null) {
-			throw new Exception("OrderService.ADD_INVALID");
-		}
 		
-		}
-		catch(Exception e) {
-			throw e;
+		order1=orderRepo.save(order);
+		if(order1==null) {
+			return "failure";
 		}
 		return "Success";
 	}
@@ -168,18 +170,29 @@ public class OrderService {
 		}
 		return "Success";
 	}
+//	public String addProdOrderedDetails(ProdOrdered order) throws Exception {
+//		//System.out.println(order);
+//		logger.info("Isertinging Product Ordered details : {}");
+//		
+//		try {
+//		ProdOrdered po= prodRepo.save(order);
+//		if(po==null) {
+//			throw new Exception("OrderService.ADD_INVALID");
+//		}
+//		}
+//		catch(Exception e) {
+//			throw e;
+//		}
+//		return "Success";
+//	}
 	public String addProdOrderedDetails(ProdOrdered order) throws Exception {
 		//System.out.println(order);
 		logger.info("Isertinging Product Ordered details : {}");
 		
-		try {
+	
 		ProdOrdered po= prodRepo.save(order);
 		if(po==null) {
-			throw new Exception("OrderService.ADD_INVALID");
-		}
-		}
-		catch(Exception e) {
-			throw e;
+			return "failure";
 		}
 		return "Success";
 	}
