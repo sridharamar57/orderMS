@@ -71,20 +71,41 @@ public class OrderService {
 		logger.info("Deleting Order details : {}", orderId);
 		try {
 		orderRepo.deleteById(orderId);
+		//return "Success";
 		}
 		catch(Exception e) {
 			throw e;
+			//return "failure";
 		}
 		return "Success";
 	}
+	
+//	public String addOrderDetails(Order order) throws Exception {
+//		logger.info("Inserting Order details : {}");
+//		Order order1=null;
+//		try {
+//		order1=orderRepo.save(order);
+//		
+//		List<ProdOrdered> lp=order.getOrderDetails();
+//		if(order1==null) {
+//			throw new Exception("OrderService.ADD_INVALID");
+//		}
+//		
+//		}
+//		catch(Exception e) {
+//			throw e;
+//		}
+//		return "Success";
+//	}
 	public String addOrderDetails(Order order) throws Exception {
 		logger.info("Inserting Order details : {}");
+		//Order order1=null;
 		Integer i=null;
 		try {
 		i=orderRepo.save(order).getOrderId();
 		}
 		catch(Exception e) {
-			throw e;
+			
 		}
 		if(i==null) {
 			return "failure";
@@ -104,6 +125,7 @@ public class OrderService {
 		List<ProdOrdered> orders = prodRepo.findAll();	
 		List<ProdOrderedDTO> orderDTOs = new ArrayList<>();
 		for (ProdOrdered plan : orders) {
+			//System.out.println("Hello"+plan.getPrice());
 			ProdOrderedDTO orderDTO = ProdOrderedDTO.valueOf(plan);
 			orderDTOs.add(orderDTO);
 		}
@@ -153,7 +175,23 @@ public class OrderService {
 		}
 		return "Success";
 	}
+//	public String addProdOrderedDetails(ProdOrdered order) throws Exception {
+//		//System.out.println(order);
+//		logger.info("Isertinging Product Ordered details : {}");
+//		
+//		try {
+//		ProdOrdered po= prodRepo.save(order);
+//		if(po==null) {
+//			throw new Exception("OrderService.ADD_INVALID");
+//		}
+//		}
+//		catch(Exception e) {
+//			throw e;
+//		}
+//		return "Success";
+//	}
 	public String addProdOrderedDetails(ProdOrdered order) throws Exception {
+		//System.out.println(order);
 		logger.info("Isertinging Product Ordered details : {}");
 		ProdOrdered po=null;
 		try {
@@ -222,15 +260,19 @@ public class OrderService {
 				}
 			}
 		}
+		System.out.println(totalprice);
 		return totalprice;
 	}
 	public double calculateAmount(int rewardpoints,double totalprice) {
+		System.out.println("rew : "+rewardpoints);
 		double discount=(double)rewardpoints/4.0;
 		double amount=totalprice-discount;
+		System.out.println(amount);
 		return amount;
 	}
 	public int calculateRewardPoints(double price) {
 		double rew=price/100.0;
+		System.out.println(rew);
 		return (int)rew;
 	}
 
