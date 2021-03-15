@@ -82,22 +82,6 @@ public class ProductDTO {
 	public void setSubcategory(String subcategory) {
 		this.subcategory = subcategory;
 	}
-//	public static ProductDTO valueOf(Product product) {
-//		ProductDTO productDTO = new ProductDTO();
-//		productDTO.setBrand(product.getBrand());
-//		productDTO.setCategory(product.getCategory());
-//		productDTO.setDescription(product.getDescription());
-//		productDTO.setImage(product.getImage());
-//		productDTO.setPrice(product.getPrice());
-//		productDTO.setProductId(product.getProductId());
-//		productDTO.setProductName(product.getProductName());
-//		productDTO.setRating(product.getRating());
-//		productDTO.setStock(product.getStock());
-//		productDTO.setSubcategory(product.getSubcategory());
-//		productDTO.setSellerId(product.getSellerId());
-//		
-//		return productDTO;
-//	}
-	
+
 }
 
