@@ -400,7 +400,7 @@ public class OrderController {
 		else {
 			buyerdto.setIsPrivileged(0);
 		}
-		buyerdto.setRewardPoints(1001);
+		buyerdto.setRewardPoints(rewardPoints);
 		new RestTemplate().put(userUri+"buyer/"+buyerId, buyerdto);
 		Order o=new Order();
 		o.setAddress(order.getAddress());
@@ -445,7 +445,7 @@ public class OrderController {
 									new RestTemplate().delete(userUri+"cart/"+buyerId+"/"+pr.getProductId());
 								}
 								int stock=pr.getStock()-prod.getQuantity();
-								pr.setStock(100);
+								pr.setStock(stock);
 								new RestTemplate().put(productUri+"products/"+pr.getProductId(), pr);
 								try {
 									planService.addProdOrderedDetails(po);
@@ -476,7 +476,7 @@ public class OrderController {
 									new RestTemplate().delete(userUri+"cart/"+buyerId+"/"+pr.getProductId());
 								}
 								int stock=pr.getStock()-prod.getQuantity();
-								pr.setStock(100);
+								pr.setStock(stock);
 								new RestTemplate().put(productUri+"products/"+pr.getProductId(), pr);
 								try {
 									planService.addProdOrderedDetails(po);
