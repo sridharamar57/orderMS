@@ -193,9 +193,12 @@ public class OrderService {
 	public String addProdOrderedDetails(ProdOrdered order) throws Exception {
 		//System.out.println(order);
 		logger.info("Isertinging Product Ordered details : {}");
-		
-	
-		ProdOrdered po= prodRepo.save(order);
+		ProdOrdered po=null;
+		try {
+		po= prodRepo.save(order);
+		}catch(Exception e) {
+			
+		}
 		if(po==null) {
 			return "failure";
 		}
