@@ -49,6 +49,24 @@ public class OrderService {
 		logger.info("Order details : {}", orderDTOs);
 		return orderDTOs;
 	}
+	public List<OrderDTO> getSpecificOrders(Integer buyerId) throws Exception {
+		List<Order> orders = orderRepo.findByBuyerId(buyerId);	
+		List<OrderDTO> orderDTOs = new ArrayList<>();
+		for (Order plan : orders) {
+			OrderDTO orderDTO = OrderDTO.valueOf(plan);
+			orderDTOs.add(orderDTO);
+		}
+		try {
+		if(orderDTOs.isEmpty()) {
+			throw new Exception("OrderService.Orders_NOT_FOUND");
+		}
+		}
+		catch(Exception e) {
+			throw e;
+		}
+		logger.info("Order details : {}", orderDTOs);
+		return orderDTOs;
+	}
 	public OrderDTO getSpecificOrder(int orderId) throws Exception {
 		logger.info("Order details : {}", orderId);
 		OrderDTO orderDTO = null;
@@ -69,15 +87,16 @@ public class OrderService {
 	}
 	public String deleteSpecificOrder(int orderId) throws Exception{
 		logger.info("Deleting Order details : {}", orderId);
+		String s="failure";
 		try {
 		orderRepo.deleteById(orderId);
-		//return "Success";
+		s="Success";
 		}
 		catch(Exception e) {
+			
 			throw e;
-			//return "failure";
 		}
-		return "Success";
+		return s;
 	}
 	
 //	public String addOrderDetails(Order order) throws Exception {
