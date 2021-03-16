@@ -15,9 +15,9 @@ phases:
     commands:
       - echo Logging into Amazon ECR
       - aws --version
-#      - $(aws ecr get-login --no-include-email --region us-east-2)
+      - $(aws ecr get-login --no-include-email --region us-east-2)
  #     - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 945878195942.dkr.ecr.ap-south-1.amazonaws.com
-      - aws ecr get-login-password \ --region ap-south-1 \ | docker login \ --username AWS \ --password-stdin 945878195942.dkr.ecr.ap-south-1.amazonaws.com
+ #     - aws ecr get-login-password \ --region ap-south-1 \ | docker login \ --username AWS \ --password-stdin 945878195942.dkr.ecr.ap-south-1.amazonaws.com
       - REPOSITORY_URI=945878195942.dkr.ecr.ap-south-1.amazonaws.com/order16march
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
