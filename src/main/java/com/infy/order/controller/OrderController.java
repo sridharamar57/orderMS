@@ -70,13 +70,12 @@ public class OrderController {
 		}
 		return resEntity;
 	}
-	@GetMapping(value = "/orders/{orderId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<OrderDTO> getSpecificPlans(@PathVariable Integer orderId)throws Exception {
-		logger.info("Fetching details of order {}", orderId);
-		ResponseEntity<OrderDTO> resEntity=null;
+	@GetMapping(value = "/orders/{buyerId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<OrderDTO>> getSpecificPlans(@PathVariable Integer buyerId)throws Exception {
+		logger.info("Fetching details of order {}", buyerId);
+		ResponseEntity<List<OrderDTO>> resEntity=null;
 		try {
-			OrderDTO oDTO=planService.getSpecificOrder(orderId);
-			List<ProdOrdered> pl=oDTO.getProductsOrdered();
+			List<OrderDTO> oDTO=planService.getSpecificOrders(buyerId);
 			resEntity=new ResponseEntity<>(oDTO, HttpStatus.OK);
 		}
 		catch(Exception e) {
