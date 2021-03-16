@@ -1,0 +1,101 @@
+package com.amazonaws.lambda.demo;
+
+import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.RequestHandler;
+
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.amazonaws.ClientConfiguration;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.profile.ProfileCredentialsProvider;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.logs.*;
+import com.amazonaws.services.logs.model.DescribeLogStreamsRequest;
+import com.amazonaws.services.logs.model.DescribeLogStreamsResult;
+import com.amazonaws.services.logs.model.GetLogEventsRequest;
+import com.amazonaws.services.logs.model.GetLogEventsResult;
+import com.amazonaws.services.logs.model.LogStream;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+
+public class LambdaFunctionHandler implements RequestHandler<Object, String> {
+
+    @Override
+    public String handleRequest(Object input, Context context) {
+        context.getLogger().log("Input: " + input);
+        
+        System.out.println("*****************************************************");
+        
+        
+        ClientConfiguration clientConfig = new ClientConfiguration();
+
+        AWSLogsClientBuilder builder = AWSLogsClientBuilder.standard();
+
+        AWSLogs logsClient = builder
+                .withRegion( Regions.AP_SOUTH_1 )
+                .withClientConfiguration( clientConfig ).build();
+
+        DescribeLogStreamsRequest describeLogStreamsRequest = new DescribeLogStreamsRequest().withLogGroupName( "/ecs/ecs-add-num-taskdefn"  );
+        DescribeLogStreamsResult describeLogStreamsResult = logsClient.describeLogStreams( describeLogStreamsRequest );
+        
+         String[] logmsg = {""};
+
+            
+            for ( LogStream logStream : describeLogStreamsResult.getLogStreams() )
+            {
+                GetLogEventsRequest getLogEventsRequest = new GetLogEventsRequest()
+                        .withStartTime( Instant.now().toEpochMilli()-86400000 )
+                        .withEndTime( Instant.now().toEpochMilli() )
+                        .withLogGroupName( "/ecs/ecs-add-num-taskdefn" )
+                        .withLogStreamName( logStream.getLogStreamName() );
+
+                GetLogEventsResult result = logsClient.getLogEvents( getLogEventsRequest );
+
+                result.getEvents().forEach( outputLogEvent -> {
+                    System.out.println( outputLogEvent.getMessage() );
+                    logmsg[0] += outputLogEvent.getMessage();
+                } );
+
+            }
+    
+    
+        
+        
+        String fileName = "addnum_"+LocalDateTime.now()+".log";
+        
+        ObjectMetadata meta = null;InputStream is = null;
+        try {
+        byte[] bytes = logmsg[0].getBytes("UTF-8");
+        is = new ByteArrayInputStream(bytes);
+        //set meta information about text to be uploaded
+        meta = new ObjectMetadata();            
+        meta.setContentLength(bytes.length);     
+        meta.setContentType("text/plain");
+        } catch (IOException e) {
+        e.printStackTrace();
+        }
+        
+        String bucket_name = "loggerforme";
+        Map<String,String> map = new HashMap<String,String>();
+        final AmazonS3 s3= AmazonS3ClientBuilder.defaultClient();
+
+        s3.putObject(new PutObjectRequest(bucket_name, fileName,is,meta)
+                .withCannedAcl(CannedAccessControlList.PublicRead));
+        return "Success";
+    }
+
+}
+
