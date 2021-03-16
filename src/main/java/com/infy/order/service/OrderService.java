@@ -98,24 +98,6 @@ public class OrderService {
 		}
 		return s;
 	}
-	
-//	public String addOrderDetails(Order order) throws Exception {
-//		logger.info("Inserting Order details : {}");
-//		Order order1=null;
-//		try {
-//		order1=orderRepo.save(order);
-//		
-//		List<ProdOrdered> lp=order.getOrderDetails();
-//		if(order1==null) {
-//			throw new Exception("OrderService.ADD_INVALID");
-//		}
-//		
-//		}
-//		catch(Exception e) {
-//			throw e;
-//		}
-//		return "Success";
-//	}
 	public String addOrderDetails(Order order) throws Exception {
 		logger.info("Inserting Order details : {}");
 		//Order order1=null;
@@ -194,21 +176,7 @@ public class OrderService {
 		}
 		return "Success";
 	}
-//	public String addProdOrderedDetails(ProdOrdered order) throws Exception {
-//		//System.out.println(order);
-//		logger.info("Isertinging Product Ordered details : {}");
-//		
-//		try {
-//		ProdOrdered po= prodRepo.save(order);
-//		if(po==null) {
-//			throw new Exception("OrderService.ADD_INVALID");
-//		}
-//		}
-//		catch(Exception e) {
-//			throw e;
-//		}
-//		return "Success";
-//	}
+
 	public String addProdOrderedDetails(ProdOrdered order) throws Exception {
 		//System.out.println(order);
 		logger.info("Isertinging Product Ordered details : {}");
@@ -263,6 +231,7 @@ public class OrderService {
 				for(ProductDTO p:prod) {
 					double price=p.getPrice();
 					if(c.getProId().equals(p.getProductId())) {
+						
 						if(c.getQuantity()<p.getStock()) {
 							if(c.getQuantity()<=50) {
 							totalprice=totalprice+(quantity*price);
