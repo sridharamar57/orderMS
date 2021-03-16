@@ -31,6 +31,7 @@ import com.infy.order.dto.OrderDTO;
 
 import com.infy.order.dto.ProdOrderedDTO;
 import com.infy.order.dto.ProductDTO;
+import com.infy.order.dto.SellerDTO;
 import com.infy.order.entity.Order;
 import com.infy.order.entity.PlaceOrder;
 import com.infy.order.entity.ProdOrdered;
@@ -217,16 +218,7 @@ public class OrderController {
 		
 		String address=placeorder.getAddress();
 		int buyerId=placeorder.getBuyerId();
-		BuyerDTO buyerdto=new RestTemplate().getForObject(userUri+"buyer/"+buyerId,BuyerDTO.class);
-		int shippingcost=0;
-		if(buyerdto.getIsPrivileged()==0) {
-			System.out.println("Since you are not a privileged Customer. You can order only minimum of Quantity= 50 for a specific item and Shipping cost=50");
-			shippingcost=50;
-		}
-		else {
-			System.out.println("Since you are privileged Customer. You can order infinite Quantity for a specific item and Shipping cost is free");
-			shippingcost=0;
-		}
+		
 		
 		List<CartDTO> cartDTO1=new RestTemplate().getForObject(userUri+"cart/"+buyerId,List.class);
 		//System.out.println(type(CartDTO1)); 
@@ -242,16 +234,26 @@ public class OrderController {
 //		}
 		//System.out.println(cartDTO);
 		List<ProductDTO> prodDTO=new ArrayList<>();
-		List<ProductDTO> p=new RestTemplate().getForObject(productUri+"products",List.class);
+		//List<ProductDTO> p=new RestTemplate().getForObject(productUri+"products",List.class);
 		
 		ProductDTO pp=new RestTemplate().getForObject(productUri+"products/orders/"+1,ProductDTO.class);
+		SellerDTO seller=new RestTemplate().getForObject(userUri+"seller/"+pp.getSellerId(),SellerDTO.class);
+		if(seller.getIsactive()==1) {
+			prodDTO.add(pp);
+		}
 		
-		prodDTO.add(pp);
+		
 		ProductDTO pp1=new RestTemplate().getForObject(productUri+"products/orders/"+3,ProductDTO.class);
+		SellerDTO seller1=new RestTemplate().getForObject(userUri+"seller/"+pp1.getSellerId(),SellerDTO.class);
+		if(seller1.getIsactive()==1) {
+			prodDTO.add(pp1);
+		}
 		
-		prodDTO.add(pp1);
 		ProductDTO pp2=new RestTemplate().getForObject(productUri+"products/orders/"+2,ProductDTO.class);
-		
+		SellerDTO seller3=new RestTemplate().getForObject(userUri+"seller/"+pp2.getSellerId(),SellerDTO.class);
+		if(seller3.getIsactive()==1) {
+			prodDTO.add(pp2);
+		}
 		prodDTO.add(pp2);
 		List<CartDTO> cartdto=new ArrayList<>();
 		CartDTO cart1=new RestTemplate().getForObject(userUri+"cart/"+buyerId+"/"+1,CartDTO.class);
@@ -375,7 +377,10 @@ public class OrderController {
 			List<ProdOrdered> listorder=order.getProductsOrdered();
 			for(ProdOrdered po:listorder) {
 				ProductDTO pp1=new RestTemplate().getForObject(productUri+"products/orders/"+po.getProductId(),ProductDTO.class);
-				prodDTO.add(pp1);
+				SellerDTO seller=new RestTemplate().getForObject(userUri+"seller/"+pp1.getSellerId(),SellerDTO.class);
+				if(seller.getIsactive()==1) {
+					prodDTO.add(pp1);
+				}
 			}
 			System.out.println(prodDTO);
 			List<CartDTO> cartdto=new ArrayList<>();
@@ -429,7 +434,7 @@ public class OrderController {
 		o.setAmount(totalpriceafterdiscount);
 		o.setBuyerId(buyerId);
 		o.setDate(LocalDate.now());
-		o.setStatus("RE-ORDER PLACED");
+		o.setStatus(msg);
 		
 		try {
 		planService.addOrderDetails(o);
