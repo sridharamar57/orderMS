@@ -179,7 +179,30 @@ public class OrderController {
 	public void updateProductOrdered(@PathVariable Integer orderId,@PathVariable Integer productId, @RequestBody ProdOrdered prodorderedDTO) {
 		planService.updateProductOrdered(orderId,productId, prodorderedDTO);
 	}
-	
+	@GetMapping(value = "/order/cart", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<CartDTO> getAllCarts() {
+		logger.info("Fetching all ProductsOrdered");
+		List<CartDTO> cartDTO=new RestTemplate().getForObject(userUri+"cart",List.class);
+		return cartDTO;
+	}
+	@GetMapping(value= "/order/cart/{buyerId}/{proId}",produces=MediaType.APPLICATION_JSON_VALUE)
+	public CartDTO getSpecificCart(@PathVariable int buyerId,@PathVariable  int proId)
+	{
+		logger.info("Fetching details of cart {}{}", buyerId,proId);
+		CartDTO cartDTO=new RestTemplate().getForObject(userUri+"cart/"+buyerId+"/"+proId,CartDTO.class);
+		return cartDTO;
+	}
+	@DeleteMapping(value = "/order/cart/{buyerId}/{proId}")
+		public void deleteSpecificCart(@PathVariable Integer buyerId,@PathVariable  int proId) {
+		logger.info("Deleting details of cart {}{}", buyerId,proId);
+		new RestTemplate().delete(userUri+"cart/"+buyerId+"/"+proId);
+	}	
+	@PostMapping(value = "/order/cart",consumes = MediaType.APPLICATION_JSON_VALUE)
+	public List<CartDTO> addSpecificCart(@RequestBody CartDTO plan) {
+		logger.info("Adding cartDetails");	
+		List<CartDTO> planDTO=new RestTemplate().postForObject(userUri+"cart",plan,List.class);
+		return planDTO;
+	}
 	
 	@PostMapping(value = "/orders/placeorder",consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> placeOrder(@RequestBody PlaceOrder placeorder) {
