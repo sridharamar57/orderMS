@@ -378,8 +378,10 @@ public class OrderController {
 			for(ProdOrdered po:listorder) {
 				ProductDTO pp1=new RestTemplate().getForObject(productUri+"products/orders/"+po.getProductId(),ProductDTO.class);
 				SellerDTO seller=new RestTemplate().getForObject(userUri+"seller/"+pp1.getSellerId(),SellerDTO.class);
+				if(seller!=null) {
 				if(seller.getIsactive()==1) {
 					prodDTO.add(pp1);
+				}
 				}
 			}
 			System.out.println(prodDTO);
