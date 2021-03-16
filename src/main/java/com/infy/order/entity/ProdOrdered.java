@@ -18,8 +18,6 @@ public class ProdOrdered {
 	@Id
 	@Column(name = "prodid", nullable = false)
 	Integer productId;
-//	@EmbeddedId
-//	CompositeKey compKey;
 	
 	@Column( nullable = false)
 	Integer sellerid;

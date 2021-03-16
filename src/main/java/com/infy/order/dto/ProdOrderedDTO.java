@@ -50,7 +50,7 @@ public class ProdOrderedDTO {
 	public static ProdOrderedDTO valueOf(ProdOrdered prodOrdered) {
 		ProdOrderedDTO orderDTO= new ProdOrderedDTO();
 		orderDTO.setSellerid(prodOrdered.getSellerid());
-		//System.out.println(prodOrdered.getPrice());
+		
 		orderDTO.setOrderId(prodOrdered.getOrderId());
 		orderDTO.setPrice(prodOrdered.getPrice());
 		orderDTO.setProductId(prodOrdered.getProductId());
