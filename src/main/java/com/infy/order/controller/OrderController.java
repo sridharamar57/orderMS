@@ -237,22 +237,32 @@ public class OrderController {
 		//List<ProductDTO> p=new RestTemplate().getForObject(productUri+"products",List.class);
 		
 		ProductDTO pp=new RestTemplate().getForObject(productUri+"products/orders/"+1,ProductDTO.class);
-		SellerDTO seller=new RestTemplate().getForObject(userUri+"seller/"+pp.getSellerId(),SellerDTO.class);
+		SellerDTO seller=null;
+		if(pp!=null) {
+		seller=new RestTemplate().getForObject(userUri+"seller/"+pp.getSellerId(),SellerDTO.class);
+		}
+		if(seller!=null) {
 		if(seller.getIsactive()==1) {
 			prodDTO.add(pp);
 		}
-		
-		
-		ProductDTO pp1=new RestTemplate().getForObject(productUri+"products/orders/"+3,ProductDTO.class);
-		SellerDTO seller1=new RestTemplate().getForObject(userUri+"seller/"+pp1.getSellerId(),SellerDTO.class);
-		if(seller1.getIsactive()==1) {
-			prodDTO.add(pp1);
 		}
 		
+		ProductDTO pp1=new RestTemplate().getForObject(productUri+"products/orders/"+3,ProductDTO.class);
+		if(pp1!=null) {
+		seller=new RestTemplate().getForObject(userUri+"seller/"+pp1.getSellerId(),SellerDTO.class);
+		}
+		if(seller!=null) {
+		if(seller.getIsactive()==1) {
+			prodDTO.add(pp1);
+		}
+		}
 		ProductDTO pp2=new RestTemplate().getForObject(productUri+"products/orders/"+2,ProductDTO.class);
-		SellerDTO seller3=new RestTemplate().getForObject(userUri+"seller/"+pp2.getSellerId(),SellerDTO.class);
-		if(seller3.getIsactive()==1) {
+		if(pp2!=null) {
+			seller=new RestTemplate().getForObject(userUri+"seller/"+pp2.getSellerId(),SellerDTO.class);
+		}if(seller!=null) {
+		if(seller.getIsactive()==1) {
 			prodDTO.add(pp2);
+		}
 		}
 		prodDTO.add(pp2);
 		List<CartDTO> cartdto=new ArrayList<>();
@@ -377,7 +387,10 @@ public class OrderController {
 			List<ProdOrdered> listorder=order.getProductsOrdered();
 			for(ProdOrdered po:listorder) {
 				ProductDTO pp1=new RestTemplate().getForObject(productUri+"products/orders/"+po.getProductId(),ProductDTO.class);
-				SellerDTO seller=new RestTemplate().getForObject(userUri+"seller/"+pp1.getSellerId(),SellerDTO.class);
+				SellerDTO seller=null;
+				if(pp1!=null) {
+				seller=new RestTemplate().getForObject(userUri+"seller/"+pp1.getSellerId(),SellerDTO.class);
+				}
 				if(seller!=null) {
 				if(seller.getIsactive()==1) {
 					prodDTO.add(pp1);
