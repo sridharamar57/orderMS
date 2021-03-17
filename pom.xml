@@ -12,7 +12,7 @@
 	<artifactId>orderMS1</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
-	<name>orderMS</name>
+	<name>orderMS1</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>11</java.version>
